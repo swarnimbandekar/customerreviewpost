@@ -34,7 +34,21 @@ Get your new complaint management system up and running in 3 simple steps!
 
 ---
 
-## Step 4: Test Your App!
+## Step 4: Setup Admin Access (5 minutes)
+
+Only `swarnimbandekar9@gmail.com` should access the admin panel.
+
+1. Follow **ADMIN_ACCESS_SETUP.md**
+2. Run Step 1 SQL (create admins table)
+3. Sign up with `swarnimbandekar9@gmail.com` in your app
+4. Run Step 2 SQL (grant admin access)
+5. Log in as that email to access `/admin`
+
+**Important**: Regular users will see "Access Denied" at `/admin`
+
+---
+
+## Step 5: Test Your App!
 
 ### Test User Flow
 1. Run `npm run dev`
