@@ -1,28 +1,28 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import ComplaintForm from './components/ComplaintForm';
-import AdminDashboard from './components/AdminDashboard';
-import Login from './components/Login';
+import AuthPage from './components/AuthPage';
+import UserDashboard from './components/UserDashboard';
+import NewAdminDashboard from './components/NewAdminDashboard';
 
-function ProtectedAdmin() {
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 font-medium">Loading...</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return <Login />;
+    return <AuthPage />;
   }
 
-  return <AdminDashboard />;
+  return <>{children}</>;
 }
 
 function Router() {
@@ -48,10 +48,18 @@ function Router() {
   }, []);
 
   if (currentPath === '/admin') {
-    return <ProtectedAdmin />;
+    return (
+      <ProtectedRoute>
+        <NewAdminDashboard />
+      </ProtectedRoute>
+    );
   }
 
-  return <ComplaintForm />;
+  return (
+    <ProtectedRoute>
+      <UserDashboard />
+    </ProtectedRoute>
+  );
 }
 
 function App() {
