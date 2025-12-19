@@ -177,7 +177,7 @@ export default function HomePage() {
           onClick={handleGetStarted}
           className="hidden md:flex bg-orange-500 hover:bg-orange-600 text-white px-4 lg:px-6 py-2 rounded-xl text-sm lg:text-base font-medium shadow-lg"
         >
-          Deploy Now
+          Login
         </ShimmerButton>
       </header>
 
@@ -208,25 +208,23 @@ export default function HomePage() {
 
       <main className="relative z-10 flex flex-col items-start justify-start sm:justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-12 max-w-6xl pt-4 sm:-mt-12 lg:-mt-24 pl-6 sm:pl-12 lg:pl-20">
         <div className="mb-4 sm:mb-8">
-          <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-2">
-            <span className="text-white text-xs md:text-xs">Try 14 days trial free</span>
-          </div>
+          
         </div>
 
         <h1 className="text-white text-4xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-8xl font-bold leading-tight mb-4 sm:mb-6 text-balance">
-          Build a Portfolio
+          Postal Complaint
           <br />
-          in{" "}
+          Intelligence{" "}
           <LineShadowText className="italic font-light" shadowColor="white">
-            Minutes
+            System
           </LineShadowText>
         </h1>
 
         <p className="text-white/70 text-sm sm:text-base md:text-sm lg:text-2xl mb-6 sm:mb-8 max-w-2xl text-pretty">
-          Join a Community of Digital Artists
+          Automated, prioritized, and transparent
           <br className="hidden sm:block" />
           <span className="sm:hidden"> </span>
-          Sharing Breathtaking Landscapes.
+          grievance resolution.
         </p>
 
         <Button
