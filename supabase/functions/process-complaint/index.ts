@@ -50,8 +50,7 @@ async function getMLPredictions(complaintText: string) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ complaint_text: complaintText }),
-      // Add timeout to prevent hanging
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {
@@ -61,7 +60,6 @@ async function getMLPredictions(complaintText: string) {
 
     const predictions = await response.json();
     
-    // Validate response structure
     if (!predictions.category || !predictions.sentiment || !predictions.priority || !predictions.ai_response) {
       console.error("ML service returned incomplete data:", predictions);
       return null;
@@ -159,23 +157,33 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Call external ML service for AI predictions
-    // The ML service runs the trained models (complaint_model.pkl, vectorizer.pkl)
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    let userId = null;
+    let userEmail = null;
+
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      if (!authError && user) {
+        userId = user.id;
+        userEmail = user.email;
+      }
+    }
+
     let mlPredictions = await getMLPredictions(complaint_text);
     
-    // Fallback safety: If ML service is down, use default values
-    // This ensures complaints are still accepted and stored
     if (!mlPredictions) {
       console.warn("Using fallback values due to ML service unavailability");
       mlPredictions = getFallbackValues();
     }
 
     const { category, sentiment, priority, ai_response, confidence_score, explanation } = mlPredictions;
-
-    // Store complaint in Supabase database
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data, error } = await supabase
       .from("complaints")
@@ -188,6 +196,8 @@ Deno.serve(async (req: Request) => {
         ai_confidence_score: confidence_score || 0,
         ai_explanation: explanation || '',
         status: "Pending",
+        user_id: userId,
+        user_email: userEmail,
       })
       .select()
       .single();
@@ -196,7 +206,6 @@ Deno.serve(async (req: Request) => {
       throw error;
     }
 
-    // Send email notification to admin (non-blocking)
     sendEmailNotification(data).catch(err => {
       console.error('Email notification failed (non-blocking):', err);
     });
